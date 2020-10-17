@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import { useState, useEffect } from 'react';
 import { Title } from '../styles/pages/Home';
 
@@ -6,15 +7,15 @@ interface IProduct {
   title: string;
 }
 
+interface HomeProps {
+  products: IProduct[];
+}
+
 export default function Home() {
   const [recommendedProducts, setRecommendedProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:3333/recommended').then(response => {
-      response.json().then(data => {
-        setRecommendedProducts(data);
-      })
-    })
+
   }, []);
 
   return (
@@ -30,5 +31,16 @@ export default function Home() {
         })}
       </section>
     </div>
+  )
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const response = await fetch('http://localhost:3333/recommended')
+  const products = await response.json();
+
+  return (
+    props: {
+      products
+    }
   )
 }
